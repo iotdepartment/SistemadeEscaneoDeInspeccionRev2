@@ -45,7 +45,7 @@ Public Class Form1
         ' --- Opcional: limpiar TextBox, ComboBox, etc. ---
         TextBoxInput.Clear()
         Mesa()
-        Timer1.Interval = 1000
+        Timer1.Interval = 3000
         Timer1.Start()
         TextBoxInput.Focus()
         Mayusculas()
@@ -203,35 +203,47 @@ Public Class Form1
             End Using
         End Using
     End Sub
-    'Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-    '    SetForegroundWindow(Me.Handle)
-    '    TextBoxInput.Focus()
-    'End Sub
 
     ' Variables para validar que ya tenemos todo
-
     Private Sub TextBoxInput_KeyDown(sender As Object, e As KeyEventArgs) Handles TextBoxInput.KeyDown
         If e.KeyCode = Keys.Enter Then
             Dim entrada As String = TextBoxInput.Text.Trim()
+
+            ' Validar que la entrada no esté vacía para evitar errores
+            If String.IsNullOrEmpty(entrada) Then Exit Sub
+
             Select Case entrada(0)
-                Case "0"c
-                    ' Empleado
+                Case "0"c ' Empleado
                     BuscarEmpleado(entrada)
                     CargarRegistros()
-                Case "F"c
-                    ' Mandril
-                    BuscarMandril(entrada)
-                    ultimoMandril = entrada
+
+                Case "F"c ' Mandril
+                    If entrada = ultimoMandril Then
+                        ' VALIDACIÓN DE SEGURIDAD
+                        If LabelNameTM.Text = "Escanear Numero de Empleado" Or LabelNameTM.Text = "No encontrado" Then
+                            LabelAyuda.Text = "⚠️ ERROR: Debe escanear EMPLEADO antes de registrar"
+                            LabelAyuda.BackColor = Color.Red
+                        Else
+                            ' Si hay empleado, entonces sí registramos
+                            RegistrarPorCantidad("+" & LabelSP.Text)
+                            LabelAyuda.Text = LabelSP.Text & " Piezas registrads ✅"
+                            LabelAyuda.BackColor = Color.LawnGreen
+                        End If
+                    Else
+                        ' Si es un mandril nuevo o el primero del día
+                        BuscarMandril(entrada)
+                        ultimoMandril = entrada
+                    End If
                     CargarRegistros()
-                Case "+"c
-                    ' Registrar piezas personalizadas
+                Case "+"c ' Registrar piezas personalizadas
                     RegistrarPorCantidad(entrada)
                     CargarRegistros()
-                Case Else
-                    ' Si no es 0, F o + → puede ser un código de defecto
+
+                Case Else ' Si no es 0, F o + → puede ser un código de defecto
                     BuscarDefecto(entrada)
                     CargarRegistros()
             End Select
+
             TextBoxInput.Clear()
             TextBoxInput.Focus()
         End If
@@ -526,8 +538,10 @@ Public Class Form1
         End If
     End Function
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        ' Intentar reconectar automáticamente cada 10 segundos
-        'VerificarConexionBascula()
+        'Intentar reconectar automáticamente cada 10 segundos
+        VerificarConexionBascula()
+        SetForegroundWindow(Me.Handle)
+        TextBoxInput.Focus()
     End Sub
 
     Private Sub LabelMandril_Click(sender As Object, e As EventArgs) Handles LabelMandril.Click
