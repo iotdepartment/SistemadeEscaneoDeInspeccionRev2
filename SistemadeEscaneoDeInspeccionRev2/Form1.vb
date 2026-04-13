@@ -25,8 +25,6 @@ Public Class Form1
         CargarMandrilesDistribucion()
         ' Validar conexión al iniciar
         VerificarConexionBascula()
-
-
     End Sub
 
     Private Function ObtenerMesaDesdeIni() As String
@@ -69,7 +67,6 @@ Public Class Form1
         End Using
     End Sub
 
-
     ' --- Sub para validar y reconectar la báscula ---
     Private Sub VerificarConexionBascula()
         Try
@@ -96,9 +93,6 @@ Public Class Form1
             LabelAyuda.BackColor = Color.Red
         End Try
     End Sub
-
-
-
     Private Sub ProcesarPesoBascula(peso As Double, crudo As String)
         If Me.InvokeRequired Then
             Me.BeginInvoke(Sub() ProcesarPesoBascula(peso, crudo))
@@ -155,7 +149,6 @@ Public Class Form1
 
         UltimoPeso = peso
     End Sub
-
     Sub Mayusculas()
         TextBoxInput.CharacterCasing = CharacterCasing.Upper
     End Sub
@@ -198,7 +191,6 @@ Public Class Form1
     Private mandrilOk As Boolean = False
     Private mesaOk As Boolean = False
     Private ultimoMandril As String = ""
-
     Private Sub TextBoxInput_KeyDown(sender As Object, e As KeyEventArgs) Handles TextBoxInput.KeyDown
         If e.KeyCode = Keys.Enter Then
             Dim entrada As String = TextBoxInput.Text.Trim()
@@ -225,7 +217,6 @@ Public Class Form1
             TextBoxInput.Focus()
         End If
     End Sub
-
     Private Sub RegistrarPorCantidad(entrada)
         ' Registrar piezas personalizadas
         Dim piezasStr As String = entrada.Substring(1) ' quitar el "+"
@@ -240,7 +231,6 @@ Public Class Form1
             MessageBox.Show("Formato inválido en el código: " & entrada)
         End If
     End Sub
-
     Private Sub RegistrarEscaneo(mesa As String, nombreEmpleado As String, mandril As String, cantidadPiezas As String)
         Using conexion As New SqlConnection(cadenaConexion)
             conexion.Open()
@@ -302,7 +292,6 @@ Public Class Form1
             End Using
         End Using
     End Sub
-
     Private Sub BuscarDefecto(codigoDefecto As String)
         Using conexion As New SqlConnection(cadenaConexion)
             conexion.Open()
@@ -321,7 +310,6 @@ Public Class Form1
             End Using
         End Using
     End Sub
-
     Private Sub RegistrarDefecto(mesa As String, nombreEmpleado As String, mandril As String, codigoDefecto As String, defecto As String)
         Using conexion As New SqlConnection(cadenaConexion)
             conexion.Open()
@@ -389,7 +377,6 @@ Public Class Form1
             MessageBox.Show("Error al cargar registros: " & ex.Message)
         End Try
     End Sub
-
     Private Sub CargarDefectosPivot()
         Using conexion As New SqlConnection(cadenaConexion)
             conexion.Open()
@@ -470,8 +457,6 @@ Public Class Form1
             Return "3"
         End If
     End Function
-
-
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         ' Intentar reconectar automáticamente cada 10 segundos
         VerificarConexionBascula()
