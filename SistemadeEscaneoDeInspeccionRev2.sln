@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.36324.19
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SistemadeEscaneoDeInspeccionRev2", "SistemadeEscaneoDeInspeccionRev2\SistemadeEscaneoDeInspeccionRev2.vbproj", "{6592AE92-B3EA-4204-A7A2-1F78F2858ABD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6592AE92-B3EA-4204-A7A2-1F78F2858ABD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6592AE92-B3EA-4204-A7A2-1F78F2858ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6592AE92-B3EA-4204-A7A2-1F78F2858ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6592AE92-B3EA-4204-A7A2-1F78F2858ABD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A36D1DCB-9005-465F-ABEA-5FFE15D0E4C0}
+	EndGlobalSection
+EndGlobal
