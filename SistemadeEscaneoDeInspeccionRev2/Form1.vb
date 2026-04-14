@@ -37,6 +37,7 @@ Public Class Form1
         ' --- Reiniciar mandril (variable y Label) ---
         ultimoMandril = String.Empty
         LabelMandril.Text = "Mandril: -"
+        ultimoMandril = ""
         LabelSP.Text = 0
         ' --- Resetear otros controles si aplica ---
         LabelMesa.Text = ""
@@ -45,7 +46,7 @@ Public Class Form1
         ' --- Opcional: limpiar TextBox, ComboBox, etc. ---
         TextBoxInput.Clear()
         Mesa()
-        Timer1.Interval = 3000
+        Timer1.Interval = 5000
         Timer1.Start()
         TextBoxInput.Focus()
         Mayusculas()
@@ -216,17 +217,19 @@ Public Class Form1
                 Case "0"c ' Empleado
                     BuscarEmpleado(entrada)
                     CargarRegistros()
-
                 Case "F"c ' Mandril
                     If entrada = ultimoMandril Then
-                        ' VALIDACIÓN DE SEGURIDAD
+                        ' VALIDACIÓN DE SEGURIDAD (Empleado y Número válido)
                         If LabelNameTM.Text = "Escanear Numero de Empleado" Or LabelNameTM.Text = "No encontrado" Then
                             LabelAyuda.Text = "⚠️ ERROR: Debe escanear EMPLEADO antes de registrar"
                             LabelAyuda.BackColor = Color.Red
+                        ElseIf Not IsNumeric(LabelSP.Text) Then ' <--- VALIDACIÓN EXTRA
+                            LabelAyuda.Text = "⚠️ ERROR: Cantidad de empaque no válida"
+                            LabelAyuda.BackColor = Color.Orange
                         Else
-                            ' Si hay empleado, entonces sí registramos
+                            ' Si todo está bien, registramos la cantidad del Standard Pack
                             RegistrarPorCantidad("+" & LabelSP.Text)
-                            LabelAyuda.Text = LabelSP.Text & " Piezas registrads ✅"
+                            LabelAyuda.Text = LabelSP.Text & " Piezas registradas ✅"
                             LabelAyuda.BackColor = Color.LawnGreen
                         End If
                     Else
@@ -240,7 +243,17 @@ Public Class Form1
                     CargarRegistros()
 
                 Case Else ' Si no es 0, F o + → puede ser un código de defecto
-                    BuscarDefecto(entrada)
+                    ' VALIDACIÓN DE SEGURIDAD PARA DEFECTOS
+                    If LabelNameTM.Text = "Escanear Numero de Empleado" Or LabelNameTM.Text = "No encontrado" Then
+                        LabelAyuda.Text = "⚠️ ERROR: Escanee EMPLEADO antes de reportar defecto"
+                        LabelAyuda.BackColor = Color.Red
+                    ElseIf LabelMandril.Text = "-" Or LabelMandril.Text = "No encontrado" Then
+                        LabelAyuda.Text = "⚠️ ERROR: Escanee MANDRIL antes de reportar defecto"
+                        LabelAyuda.BackColor = Color.Orange
+                    Else
+                        ' Si tenemos empleado y mandril, procedemos a buscar y registrar el defecto
+                        BuscarDefecto(entrada)
+                    End If
                     CargarRegistros()
             End Select
 
@@ -461,8 +474,11 @@ Public Class Form1
         Using conexion As New SqlConnection(cadenaConexion)
             conexion.Open()
             Dim query As String = "SELECT Defecto, Mandrel
-                               FROM RegistrodeDefectos
-                               WHERE NuMesa = @mesa AND Turno = @turno AND TM = @tm"
+                       FROM RegistrodeDefectos
+                       WHERE NuMesa = @mesa 
+                         AND Turno = @turno 
+                         AND TM = @tm
+                         AND Fecha = CAST(GETDATE() AS DATE)"
             Using cmd As New SqlCommand(query, conexion)
                 cmd.Parameters.AddWithValue("@mesa", LabelMesa.Text)
                 cmd.Parameters.AddWithValue("@turno", ObtenerTurno())
@@ -540,11 +556,15 @@ Public Class Form1
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         'Intentar reconectar automáticamente cada 10 segundos
         VerificarConexionBascula()
-        SetForegroundWindow(Me.Handle)
-        TextBoxInput.Focus()
+
     End Sub
 
     Private Sub LabelMandril_Click(sender As Object, e As EventArgs) Handles LabelMandril.Click
         InicializarPantalla()
+    End Sub
+
+    Private Sub Timer2_Tick(sender As Object, e As EventArgs) Handles Timer2.Tick
+        SetForegroundWindow(Me.Handle)
+        TextBoxInput.Focus()
     End Sub
 End Class
