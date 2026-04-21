@@ -1,34 +1,34 @@
 ﻿Imports System.Globalization
 Imports System.IO.Ports
+Imports System.Text
 Imports System.Text.RegularExpressions
 
 Public Class BasculaReader
+
     Private buffer As String = ""
     Public Event PesoRecibido(peso As Double, crudo As String)
 
     Private WithEvents puerto As SerialPort
 
     ' --- Iniciar conexión ---
-    Public Function Iniciar() As Boolean
+    Public Function Iniciar(puertoConfig As String) As Boolean
         Try
-            If puerto IsNot Nothing AndAlso puerto.IsOpen Then
-                Return True
-            End If
+            If puerto IsNot Nothing AndAlso puerto.IsOpen Then Return True
 
-            ' Validar que el puerto COM3 existe
-            If Not SerialPort.GetPortNames().Contains("COM6") Then
+            If Not SerialPort.GetPortNames().Contains(puertoConfig) Then
                 Return False
             End If
 
-            puerto = New SerialPort("COM6", 9600, Parity.None, 7, StopBits.One)
+            puerto = New SerialPort(puertoConfig, 9600, Parity.None, 7, StopBits.One)
             puerto.Handshake = Handshake.None
-            puerto.Encoding = System.Text.Encoding.ASCII
+            puerto.Encoding = Encoding.ASCII
             puerto.NewLine = vbLf
-            puerto.ReceivedBytesThreshold = 1
-            buffer = ""
 
             puerto.Open()
+            buffer = ""
+
             Return True
+
         Catch ex As Exception
             Return False
         End Try
@@ -55,28 +55,33 @@ Public Class BasculaReader
         Try
             buffer &= puerto.ReadExisting()
 
-            ' Procesar solo cuando haya salto de línea
-            If buffer.Contains(vbLf) OrElse buffer.Contains(vbCr) Then
-                Dim lineas = buffer.Split({vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries)
+            ' Dividir por CR/LF sin eliminar entradas vacías
+            Dim partes = buffer.Split({vbCr, vbLf}, StringSplitOptions.None)
 
-                ' Mantener solo la parte incompleta
-                buffer = If(buffer.EndsWith(vbCr) OrElse buffer.EndsWith(vbLf), "", lineas.Last())
+            ' Procesar todas menos la última
+            For i = 0 To partes.Length - 2
+                ProcesarLinea(partes(i).Trim())
+            Next
 
-                ' Procesar cada línea completa
-                For Each l In lineas
-                    Dim t = l.Trim()
+            ' Guardar la última parte (posiblemente incompleta)
+            buffer = partes.Last()
 
-                    If t.StartsWith("ST") Then
-                        Dim match = Regex.Match(t, "([+-]?\d+(\.\d+)?)")
-                        If match.Success Then
-                            Dim valor As Double = Double.Parse(match.Value, CultureInfo.InvariantCulture)
-                            RaiseEvent PesoRecibido(valor, t)
-                        End If
-                    End If
-                Next
-            End If
         Catch ex As Exception
             ' Ignorar errores
         End Try
     End Sub
+
+    ' --- Procesar una línea completa ---
+    Private Sub ProcesarLinea(t As String)
+        If String.IsNullOrWhiteSpace(t) Then Exit Sub
+
+        If t.StartsWith("ST") Then
+            Dim match = Regex.Match(t, "([+-]?\d+(\.\d+)?)")
+            If match.Success Then
+                Dim valor As Double = Double.Parse(match.Value, CultureInfo.InvariantCulture)
+                RaiseEvent PesoRecibido(valor, t)
+            End If
+        End If
+    End Sub
+
 End Class

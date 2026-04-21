@@ -4,10 +4,6 @@ Imports System.Runtime.InteropServices
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 
 Public Class Form1
-    <DllImport("user32.dll")>
-    Private Shared Function SetForegroundWindow(hWnd As IntPtr) As Boolean
-    End Function
-
     Dim cadenaConexion As String = "Server=10.195.10.166,1433;Database=ScanSystemDB;User Id=Manu;Password=2022.Tgram2;"
     Private ContadorPiezas As Integer = 0
     Private UltimoPeso As Double = 0
@@ -19,78 +15,13 @@ Public Class Form1
     Private mandrilOk As Boolean = False
     Private mesaOk As Boolean = False
     Private ultimoMandril As String = ""
+    Dim turnoAnterior As String = ""
     Private WithEvents bascula As New BasculaReader
-    ' Variable global para el 
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        InicializarPantalla()
-    End Sub
-    Private Sub InicializarPantalla()
-        ' --- Limpiar DataGridViews ---
-        DGVPiezasBuenas.DataSource = Nothing
-        DGVPiezasBuenas.Rows.Clear()
-        DGVDefectos.DataSource = Nothing
-        DGVDefectos.Rows.Clear()
-        ' --- Reiniciar Labels ---
-        LabelBuenas.Text = "Buenas: 0"
-        LabelDefectos.Text = "Defectuosas: 0"
-        LabelTotal.Text = "Total: 0"
-        ' --- Reiniciar mandril (variable y Label) ---
-        ultimoMandril = String.Empty
-        LabelMandril.Text = "Mandril: -"
-        ultimoMandril = ""
-        LabelSP.Text = 0
-        ' --- Resetear otros controles si aplica ---
-        LabelMesa.Text = ""
-        LabelNETM.Text = ""
-        LabelNameTM.Text = "Escanear Numero de Empleado"
-        ' --- Opcional: limpiar TextBox, ComboBox, etc. ---
-        TextBoxInput.Clear()
-        Mesa()
-        Timer1.Interval = 5000
-        Timer1.Start()
-        TextBoxInput.Focus()
-        Mayusculas()
-        CargarMandrilesDistribucion()
-        ' Validar conexión al iniciar
-        '  VerificarConexionBascula()
-    End Sub
 
 
-    Private Function ObtenerMesaDesdeIni() As String
-        Dim configPath As String = "config.ini"
-        Dim mesaIdArchivo As String = ""
-        If File.Exists(configPath) Then
-            Dim lines() As String = File.ReadAllLines(configPath)
-            For Each line As String In lines
-                line = line.Trim()
-                If line.StartsWith("Mesa_Id") Then
-                    mesaIdArchivo = line.Split("="c)(1).Trim()
-                End If
-            Next
-        End If
-        Return mesaIdArchivo
+    <DllImport("user32.dll")>
+    Private Shared Function SetForegroundWindow(hWnd As IntPtr) As Boolean
     End Function
-
-    Private Sub CargarMandrilesDistribucion()
-        Dim mesaIni As String = ObtenerMesaDesdeIni()
-        Using conexion As New SqlConnection(cadenaConexion)
-            conexion.Open()
-            ' Traer solo columna Mandril, filtrando por Estacion (igual a Mesa_Id) y Area = 'Inspeccion'
-            Dim query As String = "SELECT Mandril
-                               FROM Mandriles
-                               WHERE Estacion = @mesa AND Area = 'Inspeccion'"
-            Using cmd As New SqlCommand(query, conexion)
-                cmd.Parameters.AddWithValue("@mesa", mesaIni)
-                Dim adapter As New SqlDataAdapter(cmd)
-                Dim tabla As New DataTable()
-                adapter.Fill(tabla)
-                DGVDistribucion.DataSource = tabla
-                DGVDistribucion.DefaultCellStyle.WrapMode = DataGridViewTriState.True
-                DGVDistribucion.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
-            End Using
-        End Using
-    End Sub
-
     ' --- Sub para validar y reconectar la báscula ---
     Private Sub VerificarConexionBascula()
         Try
@@ -98,9 +29,11 @@ Public Class Form1
                 bascula = New BasculaReader()
             End If
 
-            ' Intentar iniciar si no está conectada
+            Dim rutaINI As String = "config.ini"
+            Dim puertoCOM As String = LeerValorINI(rutaINI, "Puerto_COM")
+
             If Not bascula.EstaConectada() Then
-                If bascula.Iniciar() Then
+                If bascula.Iniciar(puertoCOM) Then
                     LabelAyuda.Text = "✅ Báscula conectada correctamente"
                     LabelAyuda.BackColor = Color.LightGreen
                 Else
@@ -116,6 +49,11 @@ Public Class Form1
             LabelAyuda.Text = "⚠ Error al conectar con la báscula ⚠"
             LabelAyuda.BackColor = Color.Red
         End Try
+
+
+    End Sub
+    Private Sub bascula_PesoRecibido(peso As Double, crudo As String) Handles bascula.PesoRecibido
+        ProcesarPesoBascula(peso, crudo)
     End Sub
     Private Sub ProcesarPesoBascula(peso As Double, crudo As String)
         If Me.InvokeRequired Then
@@ -173,6 +111,9 @@ Public Class Form1
 
         UltimoPeso = peso
     End Sub
+    ' -------------------------
+    ' Cargar Mesa y colocar todo en mayusculas
+    ' -------------------------
     Sub Mayusculas()
         TextBoxInput.CharacterCasing = CharacterCasing.Upper
     End Sub
@@ -205,8 +146,93 @@ Public Class Form1
             End Using
         End Using
     End Sub
+    Private Function LeerValorINI(ruta As String, clave As String) As String
+        If Not File.Exists(ruta) Then Return ""
+        For Each linea In File.ReadAllLines(ruta)
+            If linea.Contains("=") Then
+                Dim partes = linea.Split("="c)
+                If partes(0).Trim().ToUpper() = clave.ToUpper() Then
+                    Return partes(1).Trim()
+                End If
+            End If
+        Next
+        Return ""
+    End Function
 
+
+    ' -------------------------
+    ' Inicia el form
+    ' -------------------------
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        InicializarPantalla()
+    End Sub
+    Private Sub InicializarPantalla()
+        ' --- Limpiar DataGridViews ---
+        DGVPiezasBuenas.DataSource = Nothing
+        DGVPiezasBuenas.Rows.Clear()
+        DGVDefectos.DataSource = Nothing
+        DGVDefectos.Rows.Clear()
+        ' --- Reiniciar Labels ---
+        LabelBuenas.Text = "Buenas: 0"
+        LabelDefectos.Text = "Defectuosas: 0"
+        LabelTotal.Text = "Total: 0"
+        ' --- Reiniciar mandril (variable y Label) ---
+        ultimoMandril = String.Empty
+        LabelMandril.Text = "Mandril: -"
+        ultimoMandril = ""
+        LabelSP.Text = 0
+        ' --- Resetear otros controles si aplica ---
+        LabelMesa.Text = ""
+        LabelNETM.Text = ""
+        LabelNameTM.Text = "Escanear Numero de Empleado"
+        ' --- Opcional: limpiar TextBox, ComboBox, etc. ---
+        TextBoxInput.Clear()
+        Mesa()
+        Timer1.Interval = 5000
+        Timer1.Start()
+        TextBoxInput.Focus()
+        Mayusculas()
+        CargarMandrilesDistribucion()
+        'Validar conexión al iniciar
+        VerificarConexionBascula()
+    End Sub
+    Private Function ObtenerMesaDesdeIni() As String
+        Dim configPath As String = "config.ini"
+        Dim mesaIdArchivo As String = ""
+        If File.Exists(configPath) Then
+            Dim lines() As String = File.ReadAllLines(configPath)
+            For Each line As String In lines
+                line = line.Trim()
+                If line.StartsWith("Mesa_Id") Then
+                    mesaIdArchivo = line.Split("="c)(1).Trim()
+                End If
+            Next
+        End If
+        Return mesaIdArchivo
+    End Function
+    Private Sub CargarMandrilesDistribucion()
+        Dim mesaIni As String = ObtenerMesaDesdeIni()
+        Using conexion As New SqlConnection(cadenaConexion)
+            conexion.Open()
+            ' Traer solo columna Mandril, filtrando por Estacion (igual a Mesa_Id) y Area = 'Inspeccion'
+            Dim query As String = "SELECT Mandril
+                               FROM Mandriles
+                               WHERE Estacion = @mesa AND Area = 'Inspeccion'"
+            Using cmd As New SqlCommand(query, conexion)
+                cmd.Parameters.AddWithValue("@mesa", mesaIni)
+                Dim adapter As New SqlDataAdapter(cmd)
+                Dim tabla As New DataTable()
+                adapter.Fill(tabla)
+                DGVDistribucion.DataSource = tabla
+                DGVDistribucion.DefaultCellStyle.WrapMode = DataGridViewTriState.True
+                DGVDistribucion.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
+            End Using
+        End Using
+    End Sub
+
+    ' -------------------------
     ' Variables para validar que ya tenemos todo
+    ' -------------------------
     Private Sub TextBoxInput_KeyDown(sender As Object, e As KeyEventArgs) Handles TextBoxInput.KeyDown
         If e.KeyCode = Keys.Enter Then
             Dim entrada As String = TextBoxInput.Text.Trim()
@@ -262,7 +288,9 @@ Public Class Form1
             TextBoxInput.Focus()
         End If
     End Sub
+    ' -------------------------
     ' --- Validación en BD ---
+    ' -------------------------
     Private Function ValidarDatos(mesa As String, tm As String, mandril As String) As Boolean
         Using conexion As New SqlConnection(cadenaConexion)
             conexion.Open()
@@ -301,47 +329,6 @@ Public Class Form1
             Return True
         End Using
     End Function
-
-    ' --- Registrar piezas por cantidad ---
-    Private Sub RegistrarPorCantidad(entrada As String)
-        Dim piezasStr As String = entrada.Substring(1) ' quitar el "+"
-        Dim piezas As Integer
-
-        If Integer.TryParse(piezasStr, piezas) Then
-            ' Validar que haya información suficiente
-            If LabelNETM.Text <> "" AndAlso LabelNameTM.Text <> "" AndAlso ultimoMandril <> "" Then
-                ' Validar contra la base de datos
-                If ValidarDatos(LabelMesa.Text, LabelNameTM.Text, ultimoMandril) Then
-                    RegistrarEscaneo(LabelMesa.Text, LabelNameTM.Text, LabelMandril.Text, piezas.ToString())
-                    LabelAyuda.Text = "Registro exitoso."
-                Else
-                    LabelAyuda.Text = "Los datos de Mesa, TM o Mandril no son válidos en la base de datos."
-                End If
-            Else
-                LabelAyuda.Text = "Falta información de empleado o mandril antes de registrar piezas."
-            End If
-        Else
-            LabelAyuda.Text = "Formato inválido en el código: " & entrada
-        End If
-    End Sub
-
-    Private Sub RegistrarEscaneo(mesa As String, nombreEmpleado As String, mandril As String, cantidadPiezas As String)
-        Using conexion As New SqlConnection(cadenaConexion)
-            conexion.Open()
-            Dim query As String = "INSERT INTO RegistrodePiezasEscaneadas 
-                               (Fecha, Hora, Mandrel, NDPiezas, Turno, NuMesa, TM) 
-                               VALUES (CONVERT(date, GETDATE()), CONVERT(time, GETDATE()), @mandril, @ndpiezas, @turno, @mesa, @tm)"
-            Using cmd As New SqlCommand(query, conexion)
-                cmd.Parameters.AddWithValue("@mandril", mandril)
-                cmd.Parameters.AddWithValue("@ndpiezas", cantidadPiezas)
-                cmd.Parameters.AddWithValue("@turno", ObtenerTurno())
-                cmd.Parameters.AddWithValue("@mesa", mesa)
-                cmd.Parameters.AddWithValue("@tm", nombreEmpleado)
-                cmd.ExecuteNonQuery()
-            End Using
-        End Using
-        LabelAyuda.Text = ("Registro realizado correctamente")
-    End Sub
     ' -------------------------
     ' Función para buscar empleado
     ' -------------------------
@@ -404,6 +391,47 @@ Public Class Form1
             End Using
         End Using
     End Sub
+    ' -------------------------
+    ' Función para registrar en base de datos
+    ' -------------------------
+    Private Sub RegistrarPorCantidad(entrada As String)
+        Dim piezasStr As String = entrada.Substring(1) ' quitar el "+"
+        Dim piezas As Integer
+
+        If Integer.TryParse(piezasStr, piezas) Then
+            ' Validar que haya información suficiente
+            If LabelNETM.Text <> "" AndAlso LabelNameTM.Text <> "" AndAlso ultimoMandril <> "" Then
+                ' Validar contra la base de datos
+                If ValidarDatos(LabelMesa.Text, LabelNameTM.Text, ultimoMandril) Then
+                    RegistrarEscaneo(LabelMesa.Text, LabelNameTM.Text, LabelMandril.Text, piezas.ToString())
+                    LabelAyuda.Text = "Registro exitoso."
+                Else
+                    LabelAyuda.Text = "Los datos de Mesa, TM o Mandril no son válidos en la base de datos."
+                End If
+            Else
+                LabelAyuda.Text = "Falta información de empleado o mandril antes de registrar piezas."
+            End If
+        Else
+            LabelAyuda.Text = "Formato inválido en el código: " & entrada
+        End If
+    End Sub
+    Private Sub RegistrarEscaneo(mesa As String, nombreEmpleado As String, mandril As String, cantidadPiezas As String)
+        Using conexion As New SqlConnection(cadenaConexion)
+            conexion.Open()
+            Dim query As String = "INSERT INTO RegistrodePiezasEscaneadas 
+                               (Fecha, Hora, Mandrel, NDPiezas, Turno, NuMesa, TM) 
+                               VALUES (CONVERT(date, GETDATE()), CONVERT(time, GETDATE()), @mandril, @ndpiezas, @turno, @mesa, @tm)"
+            Using cmd As New SqlCommand(query, conexion)
+                cmd.Parameters.AddWithValue("@mandril", mandril)
+                cmd.Parameters.AddWithValue("@ndpiezas", cantidadPiezas)
+                cmd.Parameters.AddWithValue("@turno", ObtenerTurno())
+                cmd.Parameters.AddWithValue("@mesa", mesa)
+                cmd.Parameters.AddWithValue("@tm", nombreEmpleado)
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+        LabelAyuda.Text = ("Registro realizado correctamente")
+    End Sub
     Private Sub RegistrarDefecto(mesa As String, nombreEmpleado As String, mandril As String, codigoDefecto As String, defecto As String)
         Using conexion As New SqlConnection(cadenaConexion)
             conexion.Open()
@@ -422,6 +450,9 @@ Public Class Form1
         End Using
         LabelAyuda.Text = ("Defecto registrado: " & defecto)
     End Sub
+    ' -------------------------
+    ' Informacion de tablas
+    ' -------------------------
     Private Sub CargarRegistros()
         ' Carpeta raíz de la aplicación
         Dim logPath As String = Path.Combine(Application.StartupPath, "CargarRegistros.txt")
@@ -544,28 +575,60 @@ Public Class Form1
         LabelDefectos.Text = $"Defectuosas: {totalDefectos}"
         LabelTotal.Text = $"Total: {total}"
     End Sub
-    Private Function ObtenerTurno() As String
-        Dim horaActual As Integer = DateTime.Now.Hour
-        If horaActual >= 6 AndAlso horaActual < 14 Then
+    ' -------------------------
+    ' Verificar Bascula y Turno
+    ' -------------------------
+    Function ObtenerTurno() As String
+        Dim t As TimeSpan = DateTime.Now.TimeOfDay
+
+        Dim inicioT1 As TimeSpan = TimeSpan.FromHours(7)
+        Dim finT1 As TimeSpan = TimeSpan.FromHours(15) + TimeSpan.FromMinutes(38)
+
+        Dim inicioT2 As TimeSpan = finT1
+        Dim finT2 As TimeSpan = TimeSpan.FromHours(24)
+
+        If t >= inicioT1 AndAlso t < finT1 Then
             Return "1"
-        ElseIf horaActual >= 14 AndAlso horaActual < 22 Then
+        ElseIf t >= inicioT2 AndAlso t < finT2 Then
             Return "2"
         Else
             Return "3"
         End If
+
     End Function
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         'Intentar reconectar automáticamente cada 10 segundos
         VerificarConexionBascula()
+        ObtenerTurno()
+        ' ... tu código actual para mostrar la hora ...
+        Dim turnoAhora As String = ObtenerTurno()
 
+        ' Si es la primera vez que corre o si el turno cambió
+        If turnoAnterior <> "" AndAlso turnoAnterior <> turnoAhora Then
+            InicializarPantalla()
+        End If
+        turnoAnterior = turnoAhora ' Actualizamos el registro
     End Sub
-
+    ' -------------------------
+    ' Reiniciar pantalla
+    ' -------------------------
     Private Sub LabelMandril_Click(sender As Object, e As EventArgs) Handles LabelMandril.Click
         InicializarPantalla()
     End Sub
 
+    ' -------------------------
+    ' Siempre en primer plano y foco
+    ' -------------------------
     Private Sub Timer2_Tick(sender As Object, e As EventArgs) Handles Timer2.Tick
         SetForegroundWindow(Me.Handle)
         TextBoxInput.Focus()
+    End Sub
+
+    ' -------------------------
+    ' Boton Salir
+    ' -------------------------
+    Private Sub PictureBoxLogo_Click(sender As Object, e As EventArgs) Handles PictureBoxLogo.Click
+        Application.Exit()
+
     End Sub
 End Class
