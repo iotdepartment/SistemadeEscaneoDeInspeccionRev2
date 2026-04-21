@@ -55,6 +55,7 @@ Public Class Form1
         '  VerificarConexionBascula()
     End Sub
 
+
     Private Function ObtenerMesaDesdeIni() As String
         Dim configPath As String = "config.ini"
         Dim mesaIdArchivo As String = ""
