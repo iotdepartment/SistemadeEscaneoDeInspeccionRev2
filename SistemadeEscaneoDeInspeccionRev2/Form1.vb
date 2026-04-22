@@ -1,5 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Imports System.IO
+Imports System.IO.Ports
 Imports System.Runtime.InteropServices
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 
@@ -17,8 +18,6 @@ Public Class Form1
     Private ultimoMandril As String = ""
     Dim turnoAnterior As String = ""
     Private WithEvents bascula As New BasculaReader
-
-
     <DllImport("user32.dll")>
     Private Shared Function SetForegroundWindow(hWnd As IntPtr) As Boolean
     End Function
@@ -167,6 +166,10 @@ Public Class Form1
         InicializarPantalla()
     End Sub
     Private Sub InicializarPantalla()
+
+        'Validar conexión al iniciar
+        VerificarConexionBascula()
+
         ' --- Limpiar DataGridViews ---
         DGVPiezasBuenas.DataSource = Nothing
         DGVPiezasBuenas.Rows.Clear()
@@ -193,8 +196,7 @@ Public Class Form1
         TextBoxInput.Focus()
         Mayusculas()
         CargarMandrilesDistribucion()
-        'Validar conexión al iniciar
-        VerificarConexionBascula()
+
     End Sub
     Private Function ObtenerMesaDesdeIni() As String
         Dim configPath As String = "config.ini"
@@ -615,7 +617,7 @@ Public Class Form1
     End Function
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         'Intentar reconectar automáticamente cada 10 segundos
-        VerificarConexionBascula()
+        'VerificarConexionBascula()
         ObtenerTurno()
         ' ... tu código actual para mostrar la hora ...
         Dim turnoAhora As String = ObtenerTurno()
