@@ -357,7 +357,7 @@ Public Class Form1
     Private Sub BuscarMandril(barcode As String)
         Using conexion As New SqlConnection(cadenaConexion)
             conexion.Open()
-            Dim query As String = "SELECT Mandril, CantidaddeEmpaque FROM [Mandriles] WHERE Barcode = @barcode AND Area = 'Inspeccion'"
+            Dim query As String = "SELECT Mandril, CantidaddeEmpaque, PesoMax, PesoMin FROM [Mandriles] WHERE Barcode = @barcode AND Area = 'Inspeccion'"
             Using cmd As New SqlCommand(query, conexion)
                 cmd.Parameters.AddWithValue("@barcode", barcode)
 
@@ -365,6 +365,8 @@ Public Class Form1
                     If reader.Read() Then
                         LabelMandril.Text = reader("Mandril").ToString()
                         LabelSP.Text = reader("CantidaddeEmpaque").ToString()
+                        VarPesoMax = reader("PesoMax").ToString()
+                        VarPesoMin = reader("PesoMin").ToString()
                     Else
                         LabelMandril.Text = "No encontrado"
                         LabelSP.Text = "No encontrado"
