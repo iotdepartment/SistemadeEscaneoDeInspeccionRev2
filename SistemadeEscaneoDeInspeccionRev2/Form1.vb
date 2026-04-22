@@ -365,8 +365,23 @@ Public Class Form1
                     If reader.Read() Then
                         LabelMandril.Text = reader("Mandril").ToString()
                         LabelSP.Text = reader("CantidaddeEmpaque").ToString()
-                        VarPesoMax = reader("PesoMax").ToString()
-                        VarPesoMin = reader("PesoMin").ToString()
+                        ' --- Peso Mínimo ---
+                        If reader("PesoMin") Is DBNull.Value OrElse reader("PesoMin").ToString().Trim() = "" Then
+                            VarPesoMin = 0.05 ' valor por defecto
+                            LabelAyuda.Text = "⚠ Su manguera no cuenta con un peso asignado"
+                            LabelAyuda.BackColor = Color.Yellow
+                        Else
+                            VarPesoMin = CDbl(reader("PesoMin"))
+                        End If
+
+                        ' --- Peso Máximo ---
+                        If reader("PesoMax") Is DBNull.Value OrElse reader("PesoMax").ToString().Trim() = "" Then
+                            VarPesoMax = 2.0 ' valor por defecto
+                            LabelAyuda.Text = "⚠ Su manguera no cuenta con un peso asignado"
+                            LabelAyuda.BackColor = Color.Yellow
+                        Else
+                            VarPesoMax = CDbl(reader("PesoMax"))
+                        End If
                     Else
                         LabelMandril.Text = "No encontrado"
                         LabelSP.Text = "No encontrado"
