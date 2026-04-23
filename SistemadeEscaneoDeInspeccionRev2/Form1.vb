@@ -33,15 +33,16 @@ Public Class Form1
 
             If Not bascula.EstaConectada() Then
                 If bascula.Iniciar(puertoCOM) Then
-                    LabelAyuda.Text = "✅ Báscula conectada correctamente"
-                    LabelAyuda.BackColor = Color.LightGreen
+                    'LabelAyuda.Text = "✅ Báscula conectada correctamente"
+                    'LabelAyuda.BackColor = Color.LightGreen
+
                 Else
                     LabelAyuda.Text = "⚠ Báscula no conectada ⚠"
                     LabelAyuda.BackColor = Color.Red
                 End If
             Else
-                LabelAyuda.Text = "✅ Báscula conectada correctamente"
-                LabelAyuda.BackColor = Color.LightGreen
+                'LabelAyuda.Text = "✅ Báscula conectada correctamente"
+                'LabelAyuda.BackColor = Color.LightGreen
             End If
 
         Catch ex As Exception
@@ -52,6 +53,8 @@ Public Class Form1
 
     End Sub
     Private Sub bascula_PesoRecibido(peso As Double, crudo As String) Handles bascula.PesoRecibido
+        '' Mostrar el dato crudo que llega desde la báscula
+        'LabelAyuda.Text = "Dato recibido: " & crudo
         ProcesarPesoBascula(peso, crudo)
     End Sub
     Private Sub ProcesarPesoBascula(peso As Double, crudo As String)
@@ -74,26 +77,32 @@ Public Class Form1
             Exit Sub
         End If
 
-        ' --- Incremento ---
+        ' --- Incremento (pieza colocada) ---
         If diferencia > 0 Then
+
+            ' Peso demasiado alto → alerta
             If diferencia > VarPesoMax Then
-                LabelAyuda.Text = "⚠ Peso fuera de tolerancia ⚠"
+                LabelAyuda.Text = "⚠ Pieza fuera de peso"
                 LabelAyuda.BackColor = Color.Yellow
                 UltimoPeso = peso
                 Exit Sub
             End If
 
+            ' Peso válido → pieza OK
             ContadorPiezas += 1
             LabelContador.Text = ContadorPiezas.ToString()
-            LabelAyuda.Text = "📦 Se colocó una pieza"
-            LabelAyuda.BackColor = Color.FromArgb(127, 179, 131)
+
+            LabelAyuda.Text = "📦 Pieza OK"
+            LabelAyuda.BackColor = Color.LightGreen
+
             PesoEsperado = peso
 
-            ' --- Decremento ---
         Else
+            ' --- Decremento (pieza retirada) ---
             Dim caida As Double = Math.Abs(diferencia)
+
             If caida > VarPesoMax Then
-                LabelAyuda.Text = "⚠ Se retiraron varias piezas ⚠"
+                LabelAyuda.Text = "⚠ Se retiraron varias piezas"
                 LabelAyuda.BackColor = Color.Yellow
                 UltimoPeso = peso
                 Exit Sub
@@ -102,8 +111,10 @@ Public Class Form1
             If ContadorPiezas > 0 Then
                 ContadorPiezas -= 1
                 LabelContador.Text = ContadorPiezas.ToString()
-                LabelAyuda.Text = "📦 Se retiró una pieza"
+
+                LabelAyuda.Text = "📦 Pieza retirada"
                 LabelAyuda.BackColor = Color.LightBlue
+
                 PesoEsperado = peso
             End If
         End If
@@ -190,6 +201,7 @@ Public Class Form1
         LabelNameTM.Text = "Escanear Numero de Empleado"
         ' --- Opcional: limpiar TextBox, ComboBox, etc. ---
         TextBoxInput.Clear()
+        ContadorPiezas = 0
         Mesa()
         Timer1.Interval = 5000
         Timer1.Start()
