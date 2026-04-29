@@ -33,25 +33,45 @@ Public Class Form1
 
             If Not bascula.EstaConectada() Then
                 If bascula.Iniciar(puertoCOM) Then
-                    LabelAyuda.Text = "✅ Báscula conectada correctamente"
-                    LabelAyuda.BackColor = Color.LightGreen
+                    If LabelContador.Text = "" Then
+                        'LabelAyuda.Text = "✅ Báscula conectada correctamente"
+                        'LabelAyuda.BackColor = Color.LightGreen
+                    Else
+
+
+                    End If
+
+
                 Else
-                    LabelAyuda.Text = "⚠ Báscula no conectada ⚠"
-                    LabelAyuda.BackColor = Color.Red
+                    If LabelContador.Text = "" Then
+                        'LabelAyuda.Text = "⚠ Báscula no conectada ⚠"
+                        'LabelAyuda.BackColor = Color.Red
+                    Else
+
+
+                    End If
                 End If
             Else
-                LabelAyuda.Text = "✅ Báscula conectada correctamente"
-                LabelAyuda.BackColor = Color.LightGreen
+                If LabelContador.Text = "" Then
+
+                    'LabelAyuda.Text = "✅ Báscula conectada correctamente"
+                    'LabelAyuda.BackColor = Color.LightGreen
+                Else
+
+
+                End If
             End If
 
         Catch ex As Exception
-            LabelAyuda.Text = "⚠ Error al conectar con la báscula ⚠"
-            LabelAyuda.BackColor = Color.Red
+            'LabelAyuda.Text = "⚠ Error al conectar con la báscula ⚠"
+            'LabelAyuda.BackColor = Color.Red
         End Try
 
 
     End Sub
     Private Sub bascula_PesoRecibido(peso As Double, crudo As String) Handles bascula.PesoRecibido
+        '' Mostrar el dato crudo que llega desde la báscula
+        'LabelAyuda.Text = "Dato recibido: " & crudo
         ProcesarPesoBascula(peso, crudo)
     End Sub
     Private Sub ProcesarPesoBascula(peso As Double, crudo As String)
@@ -74,26 +94,32 @@ Public Class Form1
             Exit Sub
         End If
 
-        ' --- Incremento ---
+        ' --- Incremento (pieza colocada) ---
         If diferencia > 0 Then
+
+            ' Peso demasiado alto → alerta
             If diferencia > VarPesoMax Then
-                LabelAyuda.Text = "⚠ Peso fuera de tolerancia ⚠"
+                LabelAyuda.Text = "⚠ Pieza fuera de peso"
                 LabelAyuda.BackColor = Color.Yellow
                 UltimoPeso = peso
                 Exit Sub
             End If
 
+            ' Peso válido → pieza OK
             ContadorPiezas += 1
             LabelContador.Text = ContadorPiezas.ToString()
-            LabelAyuda.Text = "📦 Se colocó una pieza"
-            LabelAyuda.BackColor = Color.FromArgb(127, 179, 131)
+
+            LabelAyuda.Text = "📦 Pieza OK"
+            LabelAyuda.BackColor = Color.LightGreen
+
             PesoEsperado = peso
 
-            ' --- Decremento ---
         Else
+            ' --- Decremento (pieza retirada) ---
             Dim caida As Double = Math.Abs(diferencia)
+
             If caida > VarPesoMax Then
-                LabelAyuda.Text = "⚠ Se retiraron varias piezas ⚠"
+                LabelAyuda.Text = "⚠ Se retiraron varias piezas"
                 LabelAyuda.BackColor = Color.Yellow
                 UltimoPeso = peso
                 Exit Sub
@@ -102,8 +128,10 @@ Public Class Form1
             If ContadorPiezas > 0 Then
                 ContadorPiezas -= 1
                 LabelContador.Text = ContadorPiezas.ToString()
-                LabelAyuda.Text = "📦 Se retiró una pieza"
+
+                LabelAyuda.Text = "📦 Pieza retirada"
                 LabelAyuda.BackColor = Color.LightBlue
+
                 PesoEsperado = peso
             End If
         End If
@@ -190,6 +218,7 @@ Public Class Form1
         LabelNameTM.Text = "Escanear Numero de Empleado"
         ' --- Opcional: limpiar TextBox, ComboBox, etc. ---
         TextBoxInput.Clear()
+        ContadorPiezas = 0
         Mesa()
         Timer1.Interval = 5000
         Timer1.Start()
@@ -433,6 +462,9 @@ Public Class Form1
         Else
             LabelAyuda.Text = "Formato inválido en el código: " & entrada
         End If
+        LabelContador.Text = ""
+        ContadorPiezas = 0
+
     End Sub
     Private Sub RegistrarEscaneo(mesa As String, nombreEmpleado As String, mandril As String, cantidadPiezas As String)
         Using conexion As New SqlConnection(cadenaConexion)

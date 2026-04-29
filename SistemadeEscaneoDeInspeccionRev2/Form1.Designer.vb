@@ -49,8 +49,9 @@ Partial Class Form1
         Me.TextBoxInput = New System.Windows.Forms.TextBox()
         Me.PictureBoxLogo = New System.Windows.Forms.PictureBox()
         Me.Panel4 = New System.Windows.Forms.Panel()
-        Me.LabelAyuda = New System.Windows.Forms.Label()
         Me.LabelContador = New System.Windows.Forms.Label()
+        Me.LabelAyuda1 = New System.Windows.Forms.Label()
+        Me.LabelAyuda = New System.Windows.Forms.Label()
         Me.Panel5 = New System.Windows.Forms.Panel()
         Me.LabelTotal = New System.Windows.Forms.Label()
         Me.LabelDefectos = New System.Windows.Forms.Label()
@@ -248,35 +249,45 @@ Partial Class Form1
         '
         Me.Panel4.BackColor = System.Drawing.Color.White
         Me.Panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Panel4.Controls.Add(Me.LabelAyuda)
         Me.Panel4.Controls.Add(Me.LabelContador)
+        Me.Panel4.Controls.Add(Me.LabelAyuda1)
+        Me.Panel4.Controls.Add(Me.LabelAyuda)
         Me.Panel4.Dock = System.Windows.Forms.DockStyle.Top
         Me.Panel4.Location = New System.Drawing.Point(0, 118)
         Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(1360, 84)
+        Me.Panel4.Size = New System.Drawing.Size(1360, 130)
         Me.Panel4.TabIndex = 1
-        '
-        'LabelAyuda
-        '
-        Me.LabelAyuda.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.LabelAyuda.Font = New System.Drawing.Font("Avenir LT Std 65 Medium", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LabelAyuda.Location = New System.Drawing.Point(0, 0)
-        Me.LabelAyuda.Name = "LabelAyuda"
-        Me.LabelAyuda.Size = New System.Drawing.Size(971, 82)
-        Me.LabelAyuda.TabIndex = 0
-        Me.LabelAyuda.Text = "Ayuda Visual"
-        Me.LabelAyuda.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'LabelContador
         '
-        Me.LabelContador.Dock = System.Windows.Forms.DockStyle.Right
-        Me.LabelContador.Font = New System.Drawing.Font("Avenir LT Std 65 Medium", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LabelContador.Location = New System.Drawing.Point(971, 0)
+        Me.LabelContador.Dock = System.Windows.Forms.DockStyle.Left
+        Me.LabelContador.Font = New System.Drawing.Font("Microsoft Sans Serif", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LabelContador.Location = New System.Drawing.Point(1165, 0)
         Me.LabelContador.Name = "LabelContador"
-        Me.LabelContador.Size = New System.Drawing.Size(387, 82)
+        Me.LabelContador.Size = New System.Drawing.Size(194, 128)
         Me.LabelContador.TabIndex = 1
-        Me.LabelContador.Text = "Contador"
         Me.LabelContador.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'LabelAyuda1
+        '
+        Me.LabelAyuda1.Dock = System.Windows.Forms.DockStyle.Left
+        Me.LabelAyuda1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LabelAyuda1.Location = New System.Drawing.Point(764, 0)
+        Me.LabelAyuda1.Name = "LabelAyuda1"
+        Me.LabelAyuda1.Size = New System.Drawing.Size(401, 128)
+        Me.LabelAyuda1.TabIndex = 2
+        Me.LabelAyuda1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'LabelAyuda
+        '
+        Me.LabelAyuda.Dock = System.Windows.Forms.DockStyle.Left
+        Me.LabelAyuda.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LabelAyuda.Location = New System.Drawing.Point(0, 0)
+        Me.LabelAyuda.Name = "LabelAyuda"
+        Me.LabelAyuda.Size = New System.Drawing.Size(764, 128)
+        Me.LabelAyuda.TabIndex = 0
+        Me.LabelAyuda.Text = "Ayuda Visual"
+        Me.LabelAyuda.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'Panel5
         '
@@ -288,14 +299,14 @@ Partial Class Form1
         Me.Panel5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel5.Location = New System.Drawing.Point(3, 3)
         Me.Panel5.Name = "Panel5"
-        Me.Panel5.Size = New System.Drawing.Size(413, 204)
+        Me.Panel5.Size = New System.Drawing.Size(413, 199)
         Me.Panel5.TabIndex = 2
         '
         'LabelTotal
         '
         Me.LabelTotal.BackColor = System.Drawing.Color.WhiteSmoke
         Me.LabelTotal.Dock = System.Windows.Forms.DockStyle.Top
-        Me.LabelTotal.Font = New System.Drawing.Font("Avenir LT Std 65 Medium", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LabelTotal.Font = New System.Drawing.Font("Microsoft Sans Serif", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LabelTotal.Location = New System.Drawing.Point(0, 130)
         Me.LabelTotal.Name = "LabelTotal"
         Me.LabelTotal.Size = New System.Drawing.Size(411, 65)
@@ -307,7 +318,7 @@ Partial Class Form1
         '
         Me.LabelDefectos.BackColor = System.Drawing.Color.IndianRed
         Me.LabelDefectos.Dock = System.Windows.Forms.DockStyle.Top
-        Me.LabelDefectos.Font = New System.Drawing.Font("Avenir LT Std 65 Medium", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LabelDefectos.Font = New System.Drawing.Font("Microsoft Sans Serif", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LabelDefectos.Location = New System.Drawing.Point(0, 65)
         Me.LabelDefectos.Name = "LabelDefectos"
         Me.LabelDefectos.Size = New System.Drawing.Size(411, 65)
@@ -319,7 +330,7 @@ Partial Class Form1
         '
         Me.LabelBuenas.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.LabelBuenas.Dock = System.Windows.Forms.DockStyle.Top
-        Me.LabelBuenas.Font = New System.Drawing.Font("Avenir LT Std 65 Medium", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LabelBuenas.Font = New System.Drawing.Font("Microsoft Sans Serif", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LabelBuenas.Location = New System.Drawing.Point(0, 0)
         Me.LabelBuenas.Name = "LabelBuenas"
         Me.LabelBuenas.Size = New System.Drawing.Size(411, 65)
@@ -335,11 +346,11 @@ Partial Class Form1
         Me.TableLayoutPanel2.Controls.Add(Me.Panel8, 1, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.Panel5, 0, 0)
         Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top
-        Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 202)
+        Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 248)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
         Me.TableLayoutPanel2.RowCount = 1
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(1360, 210)
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(1360, 205)
         Me.TableLayoutPanel2.TabIndex = 3
         '
         'Panel8
@@ -350,7 +361,7 @@ Partial Class Form1
         Me.Panel8.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel8.Location = New System.Drawing.Point(422, 3)
         Me.Panel8.Name = "Panel8"
-        Me.Panel8.Size = New System.Drawing.Size(935, 204)
+        Me.Panel8.Size = New System.Drawing.Size(935, 199)
         Me.Panel8.TabIndex = 3
         '
         'PictureBoxhose
@@ -358,7 +369,7 @@ Partial Class Form1
         Me.PictureBoxhose.Dock = System.Windows.Forms.DockStyle.Fill
         Me.PictureBoxhose.Location = New System.Drawing.Point(0, 0)
         Me.PictureBoxhose.Name = "PictureBoxhose"
-        Me.PictureBoxhose.Size = New System.Drawing.Size(933, 202)
+        Me.PictureBoxhose.Size = New System.Drawing.Size(933, 197)
         Me.PictureBoxhose.TabIndex = 0
         Me.PictureBoxhose.TabStop = False
         '
@@ -372,11 +383,11 @@ Partial Class Form1
         Me.TableLayoutPanel3.Controls.Add(Me.Panel7, 0, 0)
         Me.TableLayoutPanel3.Controls.Add(Me.Panel6, 0, 0)
         Me.TableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel3.Location = New System.Drawing.Point(0, 412)
+        Me.TableLayoutPanel3.Location = New System.Drawing.Point(0, 453)
         Me.TableLayoutPanel3.Name = "TableLayoutPanel3"
         Me.TableLayoutPanel3.RowCount = 1
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel3.Size = New System.Drawing.Size(1360, 354)
+        Me.TableLayoutPanel3.Size = New System.Drawing.Size(1360, 313)
         Me.TableLayoutPanel3.TabIndex = 4
         '
         'Panel9
@@ -388,7 +399,7 @@ Partial Class Form1
         Me.Panel9.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel9.Location = New System.Drawing.Point(870, 3)
         Me.Panel9.Name = "Panel9"
-        Me.Panel9.Size = New System.Drawing.Size(487, 348)
+        Me.Panel9.Size = New System.Drawing.Size(487, 307)
         Me.Panel9.TabIndex = 4
         '
         'DGVDistribucion
@@ -442,13 +453,13 @@ Partial Class Form1
         Me.DGVDistribucion.RowHeadersWidth = 50
         Me.DGVDistribucion.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing
         Me.DGVDistribucion.RowTemplate.Height = 30
-        Me.DGVDistribucion.Size = New System.Drawing.Size(485, 295)
+        Me.DGVDistribucion.Size = New System.Drawing.Size(485, 254)
         Me.DGVDistribucion.TabIndex = 29
         '
         'LabelDistibuciondeMesa
         '
         Me.LabelDistibuciondeMesa.Dock = System.Windows.Forms.DockStyle.Top
-        Me.LabelDistibuciondeMesa.Font = New System.Drawing.Font("Avenir LT Std 65 Medium", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LabelDistibuciondeMesa.Font = New System.Drawing.Font("Microsoft Sans Serif", 27.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LabelDistibuciondeMesa.Location = New System.Drawing.Point(0, 0)
         Me.LabelDistibuciondeMesa.Name = "LabelDistibuciondeMesa"
         Me.LabelDistibuciondeMesa.Size = New System.Drawing.Size(485, 51)
@@ -464,7 +475,7 @@ Partial Class Form1
         Me.Panel7.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel7.Location = New System.Drawing.Point(423, 3)
         Me.Panel7.Name = "Panel7"
-        Me.Panel7.Size = New System.Drawing.Size(441, 348)
+        Me.Panel7.Size = New System.Drawing.Size(441, 307)
         Me.Panel7.TabIndex = 3
         '
         'DGVPiezasBuenas
@@ -518,7 +529,7 @@ Partial Class Form1
         Me.DGVPiezasBuenas.RowHeadersWidth = 50
         Me.DGVPiezasBuenas.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing
         Me.DGVPiezasBuenas.RowTemplate.Height = 30
-        Me.DGVPiezasBuenas.Size = New System.Drawing.Size(439, 346)
+        Me.DGVPiezasBuenas.Size = New System.Drawing.Size(439, 305)
         Me.DGVPiezasBuenas.TabIndex = 28
         '
         'Panel6
@@ -529,7 +540,7 @@ Partial Class Form1
         Me.Panel6.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel6.Location = New System.Drawing.Point(3, 3)
         Me.Panel6.Name = "Panel6"
-        Me.Panel6.Size = New System.Drawing.Size(414, 348)
+        Me.Panel6.Size = New System.Drawing.Size(414, 307)
         Me.Panel6.TabIndex = 2
         '
         'DGVDefectos
@@ -583,7 +594,7 @@ Partial Class Form1
         Me.DGVDefectos.RowHeadersWidth = 50
         Me.DGVDefectos.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing
         Me.DGVDefectos.RowTemplate.Height = 30
-        Me.DGVDefectos.Size = New System.Drawing.Size(412, 346)
+        Me.DGVDefectos.Size = New System.Drawing.Size(412, 305)
         Me.DGVDefectos.TabIndex = 27
         '
         'Timer1
@@ -673,4 +684,5 @@ Partial Class Form1
     Friend WithEvents LabelDefectos As Label
     Friend WithEvents Timer2 As Timer
     Friend WithEvents SerialPort1 As IO.Ports.SerialPort
+    Friend WithEvents LabelAyuda1 As Label
 End Class
